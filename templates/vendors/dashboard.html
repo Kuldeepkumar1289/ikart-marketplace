@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Vendor Dashboard | IKart{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+    <div>
+        <h1 style="font-size: 2rem;">{{ vendor.store_name }} Dashboard</h1>
+        <p style="color: #64748b;">Manage your marketplace inventory and track listings.</p>
+    </div>
+    <a href="{% url 'add_product' %}" class="btn">+ Add New Product</a>
+</div>
+
+<!-- Stats Overview -->
+<div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="margin: 0; text-align: center;">
+        <h4 style="color: #64748b;">Total Products</h4>
+        <p style="font-size: 1.8rem; font-weight: bold; margin-top: 0.5rem;">{{ products.count }}</p>
+    </div>
+    <div class="card" style="margin: 0; text-align: center;">
+        <h4 style="color: #64748b;">Commission Rate</h4>
+        <p style="font-size: 1.8rem; font-weight: bold; margin-top: 0.5rem;">{{ vendor.commission_rate }}%</p>
+    </div>
+    <div class="card" style="margin: 0; text-align: center;">
+        <h4 style="color: #64748b;">Store Status</h4>
+        <p style="font-size: 1.2rem; font-weight: bold; margin-top: 0.8rem; color: {% if vendor.is_approved %}#16a34a{% else %}#ea580c{% endif %};">
+            {% if vendor.is_approved %}Active / Verified{% else %}Pending Approval{% endif %}
+        </p>
+    </div>
+</div>
+
+<!-- Product Table -->
+<div class="card">
+    <h3 style="margin-bottom: 1rem;">Your Listed Inventory</h3>
+    {% if products %}
+    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+        <thead>
+            <tr style="border-bottom: 2px solid #e2e8f0;">
+                <th style="padding: 0.75rem;">Product</th>
+                <th style="padding: 0.75rem;">Price</th>
+                <th style="padding: 0.75rem;">Stock</th>
+                <th style="padding: 0.75rem;">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in products %}
+            <tr style="border-bottom: 1px solid #f1f5f9;">
+                <td style="padding: 0.75rem; font-weight: 500;">{{ item.name }}</td>
+                <td style="padding: 0.75rem;">${{ item.price }}</td>
+                <td style="padding: 0.75rem;">{{ item.stock }}</td>
+                <td style="padding: 0.75rem;">
+                    {% if item.is_active %}<span style="color: #16a34a; font-weight: 600;">Active</span>{% else %}<span style="color: #94a3b8;">Hidden</span>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #64748b;">No products uploaded yet. Click "+ Add New Product" to start selling.</p>
+    {% endif %}
+</div>
+{% endblock %}

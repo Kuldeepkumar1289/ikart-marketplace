@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}IKart - Multi-Vendor Marketplace{% endblock %}</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <!-- Google Inter Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+        .glass-nav {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(12px);
+        }
+    </style>
+</head>
+<body class="bg-[#f8fafc] text-slate-800 flex flex-col min-h-screen">
+
+    <!-- Top Announcement Bar -->
+    <div class="bg-indigo-600 text-white text-xs py-2 px-4 text-center font-medium tracking-wide">
+        🚀 Welcome to IKart! Explore thousands of independent vendor products with direct shipping.
+    </div>
+
+    <!-- Main Navigation Bar -->
+    <header class="glass-nav sticky top-0 z-50 border-b border-slate-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                
+                <!-- Brand Logo -->
+                <a href="{% url 'product_list' %}" class="flex items-center gap-2 group">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-500 to-cyan-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-indigo-500/30 group-hover:scale-105 transition-transform">
+                        iK
+                    </div>
+                    <span class="text-2xl font-extrabold text-white tracking-tight">IKart<span class="text-indigo-400">.</span></span>
+                </a>
+
+                <!-- Search Bar (Live Store Search) -->
+                <div class="hidden md:flex flex-1 max-w-lg mx-8">
+                    <form method="GET" action="{% url 'product_list' %}" class="w-full relative">
+                        <input type="text" name="search" placeholder="Search products, brands, or categories..." 
+                               value="{{ request.GET.search|default:'' }}"
+                               class="w-full bg-slate-800/80 text-sm text-slate-200 pl-11 pr-4 py-2.5 rounded-full border border-slate-700 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all placeholder:text-slate-500">
+                        <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-400 text-sm"></i>
+                    </form>
+                </div>
+
+                <!-- Action Nav Links -->
+                <div class="flex items-center gap-4">
+                    <a href="{% url 'product_list' %}" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">
+                        Explore
+                    </a>
+
+                    {% if user.is_authenticated %}
+                        {% if user.is_vendor %}
+                            <a href="{% url 'vendor_dashboard' %}" class="flex items-center gap-2 bg-indigo-600/20 text-indigo-400 border border-indigo-500/30 px-3.5 py-1.5 rounded-lg text-sm font-semibold hover:bg-indigo-600 hover:text-white transition-all">
+                                <i class="fa-solid fa-store text-xs"></i>
+                                <span>Seller Hub</span>
+                            </a>
+                        {% endif %}
+                        <div class="h-5 w-px bg-slate-700"></div>
+                        <span class="text-sm text-slate-400">Hi, <strong class="text-slate-200">{{ user.username }}</strong></span>
+                        <a href="{% url 'logout' %}" class="text-sm font-semibold text-rose-400 hover:text-rose-300 transition-colors">Logout</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-sm font-semibold text-slate-300 hover:text-white transition-colors">Sign In</a>
+                        <a href="{% url 'register_vendor' %}" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all shadow-md shadow-indigo-600/30">
+                            Seller Register
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Alert / Messages -->
+    {% if messages %}
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 w-full">
+        {% for message in messages %}
+        <div class="flex items-center justify-between p-4 mb-3 text-sm rounded-2xl border shadow-sm
+            {% if message.tags == 'error' %} bg-rose-50 text-rose-700 border-rose-200 
+            {% elif message.tags == 'success' %} bg-emerald-50 text-emerald-700 border-emerald-200 
+            {% else %} bg-indigo-50 text-indigo-700 border-indigo-200 {% endif %}">
+            <div class="flex items-center gap-2.5">
+                <i class="fa-solid {% if message.tags == 'error' %}fa-circle-exclamation{% elif message.tags == 'success' %}fa-circle-check{% else %}fa-circle-info{% endif %}"></i>
+                <span class="font-medium">{{ message }}</span>
+            </div>
+            <button onclick="this.parentElement.remove()" class="text-slate-400 hover:text-slate-600">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Main Dynamic Content -->
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center sm:flex sm:justify-between items-center">
+            <p class="text-sm">&copy; 2026 IKart Marketplace. Built with Python & Django.</p>
+            <div class="flex justify-center gap-6 mt-4 sm:mt-0 text-sm">
+                <a href="#" class="hover:text-white">Terms</a>
+                <a href="#" class="hover:text-white">Privacy</a>
+                <a href="#" class="hover:text-white">Seller Agreement</a>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

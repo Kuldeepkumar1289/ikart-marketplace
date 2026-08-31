@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ product.name }} | IKart{% endblock %}
+
+{% block content %}
+<div class="card" style="display: grid; grid-template-columns: 1fr 1.2fr; gap: 2.5rem; align-items: start;">
+    <!-- Image Box -->
+    <div>
+        {% if product.image %}
+            <img src="{{ product.image.url }}" alt="{{ product.name }}" style="width: 100%; border-radius: 8px; object-fit: cover; max-height: 450px;">
+        {% else %}
+            <div style="height: 350px; background: #e2e8f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #94a3b8;">
+                No Image Available
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Product Info -->
+    <div>
+        <p style="color: #0284c7; font-weight: 600; text-transform: uppercase; font-size: 0.85rem;">{{ product.category.name|default:"General" }}</p>
+        <h1 style="font-size: 2.2rem; margin: 0.3rem 0 1rem 0;">{{ product.name }}</h1>
+        <p class="price" style="font-size: 1.8rem; color: #0284c7;">${{ product.price }}</p>
+
+        <div style="margin: 1.5rem 0; padding: 1rem; background-color: #f1f5f9; border-radius: 6px;">
+            <p><strong>Seller:</strong> {{ product.vendor.store_name }}</p>
+            <p><strong>Availability:</strong> {% if product.stock > 0 %}<span style="color: #16a34a;">In Stock ({{ product.stock }})</span>{% else %}<span style="color: #dc2626;">Out of Stock</span>{% endif %}</p>
+        </div>
+
+        <h3 style="margin-bottom: 0.5rem;">Description</h3>
+        <p style="color: #475569; line-height: 1.6; margin-bottom: 2rem;">{{ product.description }}</p>
+
+        <button class="btn" style="padding: 0.8rem 2rem; font-size: 1rem;" {% if product.stock == 0 %}disabled style="opacity: 0.5;"{% endif %}>
+            Add to Cart
+        </button>
+    </div>
+</div>
+{% endblock %}
