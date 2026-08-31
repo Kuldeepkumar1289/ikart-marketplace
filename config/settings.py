@@ -14,18 +14,15 @@ import os
 from pathlib import Path
 import dj_database_url
 
-
+DATABASE_URL = os.environ.get('DATABASE_URL')
 # Build paths inside the pro
 # ject like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Vercel serverless environment check
-if os.environ.get('VERCEL'):
+if DATABASE_URL:
     DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': '/tmp/db.sqlite3',
-        }
+        'default': dj_database_url.parse(DATABASE_URL, conn_max_age=600)
     }
 else:
     DATABASES = {
